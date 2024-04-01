@@ -29,19 +29,28 @@
     <button type="submit" class="btn btn-primary">Submit</button>
 
 </EditForm>
+
+
 <br /> 
-<button class="btn btn-primary" @onclick="SaveFlashcards">Save Set</button>
-<br />
-<br />
-<button class="btn btn-secondary" @onclick="LoadFlashcards">Load Saved Flashcards</button>
+
+<InputText @bind-Value="flashcardSet.SetName" class="form-control" placeholder="Set Name" />
+<button @onclick="SaveCurrentSet" class="btn btn-success">Save Set</button>
+<button @onclick="LoadFlashcards" class="btn btn-info">Load Set</button>
+
+
+
+
+
 <br /><br />
-<button class="btn btn-primary" @onclick="PlayCards">Play</button>
+<button class="btn btn-primary" @onclick="PlayCards">Study</button>
 <br /><br />
-@if (flashcards.Any())
+
+
+@if (flashcardSet.Flashcards.Any())
 {
-    <h5>Flashcard Count: @flashcards.Count</h5>
+    <h5>Flashcard Count: @flashcardSet.Flashcards.Count</h5>
     <ul>
-        @foreach (var card in flashcards)
+        @foreach (var card in flashcardSet.Flashcards)
         {
             <li>
                 @card.FrontText
@@ -49,42 +58,81 @@
         }
     </ul> 
 }
+@if (allSets.Any())
+{
+    <ul>
+        @foreach (var set in allSets)
+        {
+            <li>
+                @set.SetName
+            </li>
+        }
+    </ul>
+}
+
 
 @code {
     private Flashcard newFlashcard = new Flashcard();
-    private List<Flashcard> flashcards = new List<Flashcard>();
+    private FlashcardSet flashcardSet = new FlashcardSet();
+    private List<FlashcardSet> allSets = new List<FlashcardSet>();
+
     private int nextId = 1;
 
     private void AddFlashcard()
     {
         newFlashcard.Id = nextId++;
-        flashcards.Add(newFlashcard);
+        flashcardSet.Flashcards.Add(newFlashcard);
         newFlashcard = new Flashcard(); 
     }
 
     private async Task LoadFlashcards()
     {
-        flashcards = await LocalStorage.GetItemAsync<List<Flashcard>>("flashcards") ?? new List<Flashcard>();
-        // Assuming you want to adjust the nextId according to the loaded flashcards
-        if (flashcards.Any())
+        var loadedSet = await LocalStorage.GetItemAsync<FlashcardSet>("flashcardSet") ?? new FlashcardSet();
+        flashcardSet = loadedSet;
+
+        if (flashcardSet.Flashcards.Any())
         {
-            nextId = flashcards.Max(fc => fc.Id) + 1;
+            nextId = flashcardSet.Flashcards.Max(fc => fc.Id) + 1;
         }
         else
         {
-            nextId = 1; // Reset nextId if no flashcards are loaded
+            nextId = 1;
         }
         StateHasChanged();
     }
 
-    private async Task SaveFlashcards()
+    private async Task SaveCurrentSet()
     {
-        await LocalStorage.SetItemAsync("flashcards", flashcards);
+        // Check if the set name is unique or update an existing set
+        var existingSet = allSets.FirstOrDefault(s => s.SetName == flashcardSet.SetName);
+        if (existingSet == null)
+        {
+            allSets.Add(flashcardSet); // Add new set to the list
+        }
+        else
+        {
+            // Update an existing set
+            existingSet.Flashcards = flashcardSet.Flashcards;
+        }
+
+        await SaveAllSets(); // Save all sets to local storage
+        flashcardSet = new FlashcardSet(); // Reset for a new set
     }
+
+    private async Task SaveAllSets()
+    {
+        await LocalStorage.SetItemAsync("allFlashcardSets", allSets);
+    }
+
+    private async Task LoadAllSets()
+    {
+        allSets = await LocalStorage.GetItemAsync<List<FlashcardSet>>("allFlashcardSets") ?? new List<FlashcardSet>();
+    }
+
 
     private void PlayCards()
     {
-        NavigationManager.NavigateTo("/Play");
+        NavigationManager.NavigateTo("/Study");
     }
 
 

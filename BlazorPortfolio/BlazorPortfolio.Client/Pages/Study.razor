@@ -1,0 +1,111 @@
+﻿@page "/Study"
+@rendermode InteractiveWebAssembly
+@using BlazorPorfolio.Models
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<style>
+    .flashcard {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    padding: 20px;
+    margin: 20px auto;
+    width: 70%;
+    max-width: 500px;
+    min-width: 300px;
+    height: 250px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.flashcard:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+.flashcard p {
+        margin: 0;
+        font-size: 1.2em;
+    }
+
+.btn-container{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        gap: 10px;
+        margin-top: 20px; 
+}
+
+
+</style>
+
+
+<h3>Study</h3>
+<button class="btn btn-primary" @onclick="LoadFlashcards">Load Cards: @flashcardSet.SetName</button>
+<br /><br />
+
+@if (flashcardSet.Flashcards.Any())
+{
+    <div class="btn-container">
+        <button class="btn btn-info" @onclick="PreviousCard">Previous</button>
+        <button class="btn btn-info" @onclick="NextCard">Next</button>
+    </div>
+    <br />
+    <div @onclick="FlipCard" style="cursor: pointer;" class="flashcard">
+        @if (showFront)
+        {
+            <p>@flashcardSet.Flashcards[currentIndex].FrontText</p>
+        }
+        else
+        {
+            <p>@flashcardSet.Flashcards[currentIndex].BackText</p>
+        }
+    </div>
+}
+
+@code {
+    private FlashcardSet flashcardSet = new FlashcardSet();
+    private List<FlashcardSet> allSets = new List<FlashcardSet>();
+    private int currentIndex = 0;
+    private bool showFront = true;
+
+
+    private async Task LoadFlashcards()
+    {
+        var flashcards = await LocalStorage.GetItemAsync<FlashcardSet>("flashcardSet") ?? new FlashcardSet();
+        flashcardSet = flashcards;
+        currentIndex = 0; 
+        showFront = true; 
+    }
+
+    private void NextCard()
+    {
+        if (flashcardSet.Flashcards.Any() && currentIndex < flashcardSet.Flashcards.Count - 1)
+        {
+            currentIndex++;
+            showFront = true;
+        }
+    }
+
+    private void PreviousCard()
+    {
+        if (flashcardSet.Flashcards.Any() && currentIndex > 0)
+        {
+            currentIndex--;
+            showFront = true;
+        }
+    }
+
+    private void FlipCard()
+    {
+        showFront = !showFront; 
+    }
+}

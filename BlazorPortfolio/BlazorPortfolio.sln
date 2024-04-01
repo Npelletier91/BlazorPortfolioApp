@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorPortfolio", "BlazorPortfolio\BlazorPortfolio.csproj", "{CA87DE8D-61CC-4BB8-A74D-E48AEAA014C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorPortfolio", "BlazorPortfolio\BlazorPortfolio.csproj", "{CA87DE8D-61CC-4BB8-A74D-E48AEAA014C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorPortfolio.Client", "BlazorPortfolio.Client\BlazorPortfolio.Client.csproj", "{646DF313-6EBA-4232-B851-881C435FF56C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorPortfolio.Client", "BlazorPortfolio.Client\BlazorPortfolio.Client.csproj", "{646DF313-6EBA-4232-B851-881C435FF56C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorPorfolio.Models", "BlazorPorfolio.Models\BlazorPorfolio.Models.csproj", "{EA3EFCCD-D0F8-4EAA-8903-D343AA2E33A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorPorfolio.Models", "BlazorPorfolio.Models\BlazorPorfolio.Models.csproj", "{EA3EFCCD-D0F8-4EAA-8903-D343AA2E33A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,93 @@
+﻿@page "/flashcards"
+@rendermode InteractiveWebAssembly
+@using BlazorPorfolio.Models
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+
+<h3>Flashcards</h3>
+<p>Begin by adding flashcards to a set</p>
+
+
+
+<EditForm Model="@newFlashcard" OnValidSubmit="@AddFlashcard">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="frontText" class="form-label">Front Text</label>
+        <InputText id="frontText" class="form-control" @bind-Value="newFlashcard.FrontText" />
+        <ValidationMessage For="@(() => newFlashcard.FrontText)" />
+
+    </div>
+    <div class="mb-3">
+        <label for="backText" class="form-label">Back Text</label>
+        <InputText id="backText" class="form-control" @bind-Value="newFlashcard.BackText" />
+        <ValidationMessage For="@(() => newFlashcard.BackText)" />
+
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+
+</EditForm>
+<br /> 
+<button class="btn btn-primary" @onclick="SaveFlashcards">Save Set</button>
+<br />
+<br />
+<button class="btn btn-secondary" @onclick="LoadFlashcards">Load Saved Flashcards</button>
+<br /><br />
+<button class="btn btn-primary" @onclick="PlayCards">Play</button>
+<br /><br />
+@if (flashcards.Any())
+{
+    <h5>Flashcard Count: @flashcards.Count</h5>
+    <ul>
+        @foreach (var card in flashcards)
+        {
+            <li>
+                @card.FrontText
+            </li>
+        }
+    </ul> 
+}
+
+@code {
+    private Flashcard newFlashcard = new Flashcard();
+    private List<Flashcard> flashcards = new List<Flashcard>();
+    private int nextId = 1;
+
+    private void AddFlashcard()
+    {
+        newFlashcard.Id = nextId++;
+        flashcards.Add(newFlashcard);
+        newFlashcard = new Flashcard(); 
+    }
+
+    private async Task LoadFlashcards()
+    {
+        flashcards = await LocalStorage.GetItemAsync<List<Flashcard>>("flashcards") ?? new List<Flashcard>();
+        // Assuming you want to adjust the nextId according to the loaded flashcards
+        if (flashcards.Any())
+        {
+            nextId = flashcards.Max(fc => fc.Id) + 1;
+        }
+        else
+        {
+            nextId = 1; // Reset nextId if no flashcards are loaded
+        }
+        StateHasChanged();
+    }
+
+    private async Task SaveFlashcards()
+    {
+        await LocalStorage.SetItemAsync("flashcards", flashcards);
+    }
+
+    private void PlayCards()
+    {
+        NavigationManager.NavigateTo("/Play");
+    }
+
+
+
+}
+

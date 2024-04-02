@@ -35,7 +35,7 @@
 
 <InputText @bind-Value="flashcardSet.SetName" class="form-control" placeholder="Set Name" />
 <button @onclick="SaveCurrentSet" class="btn btn-success">Save Set</button>
-<button @onclick="LoadFlashcards" class="btn btn-info">Load Set</button>
+<button @onclick="LoadAllSets" class="btn btn-info">Load Set</button>
 
 
 
@@ -60,6 +60,7 @@
 }
 @if (allSets.Any())
 {
+    <h5>Set Count: @allSets.Count</h5>
     <ul>
         @foreach (var set in allSets)
         {
@@ -85,6 +86,7 @@
         newFlashcard = new Flashcard(); 
     }
 
+    
     private async Task LoadFlashcards()
     {
         var loadedSet = await LocalStorage.GetItemAsync<FlashcardSet>("flashcardSet") ?? new FlashcardSet();
@@ -134,8 +136,5 @@
     {
         NavigationManager.NavigateTo("/Study");
     }
-
-
-
 }
 

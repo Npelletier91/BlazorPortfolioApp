@@ -48,18 +48,40 @@
 </style>
 
 
-<h3>Study</h3>
-<button class="btn btn-primary" @onclick="LoadFlashcards">Load Cards: @flashcardSet.SetName</button>
-<br /><br />
 
-@if (flashcardSet.Flashcards.Any())
+
+<h3>Study</h3><br /><br />
+
+
+
+@if (allSets.Any())
 {
-    <div class="btn-container">
-        <button class="btn btn-info" @onclick="PreviousCard">Previous</button>
-        <button class="btn btn-info" @onclick="NextCard">Next</button>
-    </div>
-    <br />
-    <div @onclick="FlipCard" style="cursor: pointer;" class="flashcard">
+    <h5>Choose your Set</h5>
+
+    @foreach (var set in allSets)
+    {
+        <button class="btn btn-info" @onclick="(() => LoadCurrentSet(set))">@set.SetName</button>
+        <br />
+        <br />
+    }
+}
+else
+    {
+        <p>Loading sets...</p>
+    }
+
+
+
+<div class="btn-container">
+    <button class="btn btn-info" @onclick="PreviousCard">Previous</button>
+    <button class="btn btn-info" @onclick="NextCard">Next</button>
+</div>
+<br />
+
+
+@if (flashcardSet != null && flashcardSet.Flashcards.Any())
+{
+    <div class="flashcard" @onclick="FlipCard">
         @if (showFront)
         {
             <p>@flashcardSet.Flashcards[currentIndex].FrontText</p>
@@ -71,6 +93,8 @@
     </div>
 }
 
+
+
 @code {
     private FlashcardSet flashcardSet = new FlashcardSet();
     private List<FlashcardSet> allSets = new List<FlashcardSet>();
@@ -78,12 +102,26 @@
     private bool showFront = true;
 
 
-    private async Task LoadFlashcards()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        var flashcards = await LocalStorage.GetItemAsync<FlashcardSet>("flashcardSet") ?? new FlashcardSet();
-        flashcardSet = flashcards;
-        currentIndex = 0; 
-        showFront = true; 
+        if (firstRender)
+        {
+            await LoadAllSets();
+            StateHasChanged();
+        }
+    }
+
+
+    private async Task LoadAllSets()
+    {
+        allSets = await LocalStorage.GetItemAsync<List<FlashcardSet>>("allFlashcardSets") ?? new List<FlashcardSet>();
+    }
+
+    private void LoadCurrentSet(FlashcardSet selectedSet)
+    {
+        flashcardSet = selectedSet;
+        currentIndex = 0;
+        showFront = true;
     }
 
     private void NextCard()

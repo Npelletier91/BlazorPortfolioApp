@@ -19,6 +19,7 @@ namespace BlazorPorfolio.Models
     }
     public class FlashcardSet
     {
+        [Required(ErrorMessage = "Name is required")]
         public string SetName { get; set; }
         public List<Flashcard> Flashcards { get; set; } = new List<Flashcard>();
     }

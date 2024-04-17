@@ -57,17 +57,16 @@
 @if (allSets.Any())
 {
     <h5>Choose your Set</h5>
-
-    @foreach (var set in allSets)
-    {
-        <button class="btn btn-info" @onclick="(() => LoadCurrentSet(set))">@set.SetName</button>
-        <br />
-        <br />
-    }
+    <div class="btn-container">
+        @foreach (var set in allSets)
+        {
+            <button class="btn btn-primary" @onclick="(() => LoadCurrentSet(set))">@set.SetName</button>
+        }
+    </div>
 }
 else
     {
-        <p>Loading sets...</p>
+    <p style="font-style: italic;">Loading sets...</p>
     }
 
 

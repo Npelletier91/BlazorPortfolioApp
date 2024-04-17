@@ -5,8 +5,51 @@
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
 
-<h3>Flashcards</h3>
-<p>Begin by adding flashcards to a set</p>
+<h1>Flashcard App</h1>
+
+
+
+@if (showSets == true && allSets.Any())
+{
+    <h5>Your Current Sets</h5>
+    <ul>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Set Name</th>
+                    <th>Cards in Set</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var set in allSets)
+                {
+                    <tr>
+                        <td>@set.SetName</td>
+                        <td>@set.Flashcards.Count</td>
+                        <td><button @onclick="(() => DeleteSet(set))">Delete</button></td>
+                    </tr>
+                }
+            </tbody>
+            </table>
+    </ul>
+}
+else if (showSets == true)
+{
+    <p style="font-style: italic;">Loading...</p>
+}
+else if (!allSets.Any())
+{
+    
+}
+<button @onclick="ShowAllSets" class="btn btn-info">Show currently saved sets </button>
+<button @onclick="HideAllSets" class="btn btn-info">Hide sets</button>
+<br />
+<br />
+
+
+<h4>Add new cards</h4>
 
 
 
@@ -32,10 +75,34 @@
 
 
 <br /> 
-
-<InputText @bind-Value="flashcardSet.SetName" class="form-control" placeholder="Set Name" />
-<button @onclick="SaveCurrentSet" class="btn btn-success">Save Set</button>
-<button @onclick="LoadAllSets" class="btn btn-info">Load Set</button>
+@if (flashcardSet.Flashcards.Any())
+{
+    <h5>Flashcard Count: @flashcardSet.Flashcards.Count</h5>
+    <ul>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Card Front</th>
+                    <th>Cards Back</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var card in flashcardSet.Flashcards)
+                {
+                    <tr>
+                        <td>@card.FrontText</td>
+                        <td>@card.BackText</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </ul>
+}
+<br />
+<InputText @bind-Value="flashcardSet.SetName" @oninput="OnInputChanged" class="form-control" placeholder="Set Name" />
+<br />
+<button @onclick="SaveCurrentSet" class="btn btn-success" disabled="@string.IsNullOrWhiteSpace(flashcardSet.SetName)">Save Set</button>
 
 
 
@@ -46,30 +113,7 @@
 <br /><br />
 
 
-@if (flashcardSet.Flashcards.Any())
-{
-    <h5>Flashcard Count: @flashcardSet.Flashcards.Count</h5>
-    <ul>
-        @foreach (var card in flashcardSet.Flashcards)
-        {
-            <li>
-                @card.FrontText
-            </li>
-        }
-    </ul> 
-}
-@if (allSets.Any())
-{
-    <h5>Set Count: @allSets.Count</h5>
-    <ul>
-        @foreach (var set in allSets)
-        {
-            <li>
-                @set.SetName
-            </li>
-        }
-    </ul>
-}
+
 
 
 @code {
@@ -78,6 +122,7 @@
     private List<FlashcardSet> allSets = new List<FlashcardSet>();
 
     private int nextId = 1;
+    private bool showSets = true;
 
     private void AddFlashcard()
     {
@@ -86,7 +131,16 @@
         newFlashcard = new Flashcard(); 
     }
 
-    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadFlashcards();
+            await LoadAllSets();
+            StateHasChanged();
+        }
+    }
+
     private async Task LoadFlashcards()
     {
         var loadedSet = await LocalStorage.GetItemAsync<FlashcardSet>("flashcardSet") ?? new FlashcardSet();
@@ -100,6 +154,17 @@
         {
             nextId = 1;
         }
+    }
+
+    private void HideAllSets()
+    {
+        showSets = false;
+        StateHasChanged();
+    }
+
+    private void ShowAllSets()
+    {
+        showSets = true;
         StateHasChanged();
     }
 
@@ -136,5 +201,23 @@
     {
         NavigationManager.NavigateTo("/Study");
     }
+
+
+
+    private void OnInputChanged(ChangeEventArgs e)
+    {
+        flashcardSet.SetName = e.Value?.ToString();
+    }
+
+
+
+    private async Task DeleteSet(FlashcardSet selectedSet)
+    {
+        allSets.Remove(selectedSet);
+        await LocalStorage.SetItemAsync("allFlashcardSets", allSets);
+    }
+
+
+
 }
 

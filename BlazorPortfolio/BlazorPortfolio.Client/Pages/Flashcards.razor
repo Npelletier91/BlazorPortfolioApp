@@ -4,14 +4,35 @@
 @inject NavigationManager NavigationManager
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 
+<style>
+    button.btn.btn-primary, input[type="button"].btn {
+        background-color: #6F089D;
+        border-color: #6F089D;
+        color: white;
+    }
+
+    button.btn.btn-outline-info, input[type="button"].btn.btn-outline-info {
+        background-color: transparent;
+            border-color: rgba(215, 108, 148, 0.52);
+            color: rgba(215, 108, 148, 0.52);
+    }
+
+    button.btn.btn-outline-info:hover, input[type="button"].btn.btn-outline-info:hover {
+                background-color: rgba(215, 108, 148, 0.52);
+        color: white;
+    }
+   
+</style>
+
+
 
 <h1>Flashcard App</h1>
 
 
-
+<br />
 @if (showSets == true && allSets.Any())
 {
-    <h5>Your Current Sets</h5>
+    <h4>Your Current Sets</h4>
     <ul>
 
         <table class="table">
@@ -19,6 +40,8 @@
                 <tr>
                     <th>Set Name</th>
                     <th>Cards in Set</th>
+                    <th></th>
+                    <th></th>
                     <th></th>
                 </tr>
             </thead>
@@ -28,7 +51,9 @@
                     <tr>
                         <td>@set.SetName</td>
                         <td>@set.Flashcards.Count</td>
-                        <td><button @onclick="(() => DeleteSet(set))">Delete</button></td>
+                        <td></td>
+                        <td><button class="btn btn-primary" @onclick="PlayCards">Study</button></td>
+                        <td><button class="btn btn-outline-danger" @onclick="(() => DeleteSet(set))">Delete</button></td>
                     </tr>
                 }
             </tbody>
@@ -41,13 +66,21 @@ else if (showSets == true)
 }
 else if (!allSets.Any())
 {
-    
-}
-<button @onclick="ShowAllSets" class="btn btn-info">Show currently saved sets </button>
-<button @onclick="HideAllSets" class="btn btn-info">Hide sets</button>
-<br />
-<br />
 
+}
+else if (showSets == false)
+{
+    <h6>Click to list all of the Flashrcard Sets that you have.</h6>
+
+}
+
+
+<button @onclick="ShowAllSets" class="btn btn-outline-info">Show</button>
+<button @onclick="HideAllSets" class="btn btn-outline-info">Hide</button>
+<br />
+<br />
+<br />
+<br />
 
 <h4>Add new cards</h4>
 
@@ -93,23 +126,25 @@ else if (!allSets.Any())
                     <tr>
                         <td>@card.FrontText</td>
                         <td>@card.BackText</td>
+                        <td><button class="btn btn-outline-danger" @onclick="(() => DeleteCard(card))">Delete</button></td>
                     </tr>
                 }
             </tbody>
         </table>
     </ul>
 }
-<br />
+
+<h6>Input the name of this Flashcard Set:</h6>
 <InputText @bind-Value="flashcardSet.SetName" @oninput="OnInputChanged" class="form-control" placeholder="Set Name" />
 <br />
-<button @onclick="SaveCurrentSet" class="btn btn-success" disabled="@string.IsNullOrWhiteSpace(flashcardSet.SetName)">Save Set</button>
+<button @onclick="SaveCurrentSet" class="btn btn-primary" disabled="@string.IsNullOrWhiteSpace(flashcardSet.SetName)">Save Set</button>
 
 
 
 
 
 <br /><br />
-<button class="btn btn-primary" @onclick="PlayCards">Study</button>
+
 <br /><br />
 
 
@@ -143,7 +178,7 @@ else if (!allSets.Any())
 
     private async Task LoadFlashcards()
     {
-        var loadedSet = await LocalStorage.GetItemAsync<FlashcardSet>("flashcardSet") ?? new FlashcardSet();
+        var loadedSet = await LocalStorage.GetItemAsync<FlashcardSet>("FlashcardSet") ?? new FlashcardSet();
         flashcardSet = loadedSet;
 
         if (flashcardSet.Flashcards.Any())
@@ -216,6 +251,14 @@ else if (!allSets.Any())
         allSets.Remove(selectedSet);
         await LocalStorage.SetItemAsync("allFlashcardSets", allSets);
     }
+
+
+    private async Task DeleteCard(Flashcard selectedCard)
+    {
+        flashcardSet.Flashcards.Remove(selectedCard);
+        await LocalStorage.SetItemAsync("FlashcardSet", flashcardSet.Flashcards);
+    }
+
 
 
 

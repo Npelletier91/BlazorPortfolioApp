@@ -44,52 +44,98 @@
         margin-top: 20px; 
 }
 
+    button.btn.btn-primary, input[type="button"].btn {
+        background-color: #6F089D;
+        border-color: #6F089D;
+        color: white;
+    }
 
+        button.btn.btn-outline-info, input[type="button"].btn.btn-outline-info {
+            background-color: transparent;
+            border-color: rgba(215, 108, 148, 0.52);
+            color: rgba(215, 108, 148, 0.52);
+        }
+
+            button.btn.btn-outline-info:hover, input[type="button"].btn.btn-outline-info:hover {
+                background-color: rgba(215, 108, 148, 0.52);
+                color: white;
+            }
 </style>
 
 
 
 
-<h3>Study</h3><br /><br />
+<h1>Flashcard App</h1><br />
 
 
-
-@if (allSets.Any())
+@if (showSets == true && allSets.Any())
 {
-    <h5>Choose your Set</h5>
-    <div class="btn-container">
-        @foreach (var set in allSets)
-        {
-            <button class="btn btn-primary" @onclick="(() => LoadCurrentSet(set))">@set.SetName</button>
-        }
-    </div>
+    <h4>Choose your flashcard set</h4>
+    <ul>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Set Name</th>
+                    <th>Cards in Set</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var set in allSets)
+                {
+                    <tr>
+                        <td>@set.SetName</td>
+                        <td>@set.Flashcards.Count</td>
+                        <td></td>
+                        <td><button class="btn btn-primary" @onclick="(() => LoadCurrentSet(set))">Study</button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </ul>
+}
+else if (showSets == true)
+{
+    <p style="font-style: italic;">Loading...</p>
+
 }
 else
-    {
-    <p style="font-style: italic;">Loading sets...</p>
-    }
+{
+    <h6>Click to list all of the Flashrcard Sets that you have.</h6>
 
+}
 
-
-<div class="btn-container">
-    <button class="btn btn-info" @onclick="PreviousCard">Previous</button>
-    <button class="btn btn-info" @onclick="NextCard">Next</button>
-</div>
+<button @onclick="ShowAllSets" class="btn btn-outline-info">Show</button>
+<button @onclick="HideAllSets" class="btn btn-outline-info">Hide</button>
 <br />
+
+
+
+
+
 
 
 @if (flashcardSet != null && flashcardSet.Flashcards.Any())
 {
+    <div class="btn-container">
+        <button class="btn btn-primary" @onclick="PreviousCard">Previous</button>
+        <button class="btn btn-primary" @onclick="NextCard">Next</button>
+    </div>
+    <br />
     <div class="flashcard" @onclick="FlipCard">
         @if (showFront)
         {
-            <p>@flashcardSet.Flashcards[currentIndex].FrontText</p>
+            <p style="font-weight: bold;">@flashcardSet.Flashcards[currentIndex].FrontText</p>
         }
         else
         {
             <p>@flashcardSet.Flashcards[currentIndex].BackText</p>
         }
     </div>
+    <p style="justify-content: center; display: flex">@(currentIndex + 1)/@flashcardSet.Flashcards.Count</p>
+
 }
 
 
@@ -99,6 +145,7 @@ else
     private List<FlashcardSet> allSets = new List<FlashcardSet>();
     private int currentIndex = 0;
     private bool showFront = true;
+    private bool showSets = true;
 
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -145,4 +192,17 @@ else
     {
         showFront = !showFront; 
     }
+
+    private void HideAllSets()
+    {
+        showSets = false;
+        StateHasChanged();
+    }
+
+    private void ShowAllSets()
+    {
+        showSets = true;
+        StateHasChanged();
+    }
+
 }

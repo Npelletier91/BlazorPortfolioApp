@@ -1,5 +1,6 @@
 ﻿using BlazorPorfolio.Models;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
 
 
 
@@ -8,16 +9,17 @@ namespace BlazorPortfolio.Client.Services
     public class SpoonacularServices
     {
         private readonly HttpClient _httpClient;
-        private string apiKey = "c9f33c53612f4c0d8015b22be380b457";
+        private readonly string _apiKey;
 
-        public SpoonacularServices(HttpClient httpClient)
+        public SpoonacularServices(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
+            _apiKey = configuration["SpoonacularApiKey"];
         }
         public async Task<RecipeData> GetRecipeAsync()
         {
 
-            string requestUri = $"https://api.spoonacular.com/recipes/random?apiKey={apiKey}&number=1";
+            string requestUri = $"https://api.spoonacular.com/recipes/random?apiKey={_apiKey}&number=1";
 
             HttpResponseMessage responce = await _httpClient.GetAsync(requestUri);
 

@@ -41,10 +41,18 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 builder.Services.AddBlazoredLocalStorage();
 
+
 builder.Services.AddHttpClient<SpoonacularServices>(client =>
 {
     client.BaseAddress = new Uri("https://api.spoonacular.com/");
+}).ConfigureHttpClient((serviceProvider, client) =>
+{
+    var config = serviceProvider.GetRequiredService<IConfiguration>();
+    client.DefaultRequestHeaders.Add("X-Api-Key", config["SpoonacularApiKey"]);
 });
+
+
+builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
 
 var app = builder.Build();

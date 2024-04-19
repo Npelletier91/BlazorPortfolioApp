@@ -49,6 +49,7 @@
                     <th></th>
                     <th></th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -59,7 +60,7 @@
                         <td>@set.Flashcards.Count</td>
                         <td></td>
                         <td><button class="btn btn-primary" @onclick="PlayCards">Study</button></td>
-                        <!-- <td><button class="btn btn-primary" @onclick="(() =>EditSet(set))">Edit</button></td>-->
+                        <td><button class="btn btn-primary" @onclick="(() =>EditSet(set))">Edit</button></td>
                         <td><button class="btn btn-outline-danger" @onclick="(() => DeleteSet(set))">Delete</button></td>
                     </tr>
                 }
@@ -278,10 +279,10 @@ else if (showSets == false)
     }
 
 
-    //private async Task EditSet(FlashcardSet selectedSet)
-    //{
-    //    flashcardSet = selectedSet;
-    //}
+    private async Task EditSet(FlashcardSet selectedSet)
+    {
+        flashcardSet = selectedSet;
+    }
 
 }
 

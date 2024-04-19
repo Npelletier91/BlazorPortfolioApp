@@ -1,4 +1,4 @@
-﻿@page "/Study"
+﻿@page "/study"
 @rendermode InteractiveWebAssembly
 @using BlazorPorfolio.Models
 @inject NavigationManager NavigationManager
@@ -80,6 +80,7 @@
                     <th>Cards in Set</th>
                     <th></th>
                     <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -90,6 +91,7 @@
                         <td>@set.Flashcards.Count</td>
                         <td></td>
                         <td><button class="btn btn-primary" @onclick="(() => LoadCurrentSet(set))">Study</button></td>
+                        <td><button class="btn btn-primary" @onclick="(() => OnShuffleButtonClick(set))">Shuffle</button></td>
                     </tr>
                 }
             </tbody>
@@ -203,6 +205,28 @@ else
     {
         showSets = true;
         StateHasChanged();
+    }
+
+
+    public void Shuffle<T>(IList<T> list)
+    {
+        Random rng = new Random();
+        int n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = rng.Next(n + 1);
+            T value = list[k];
+            list[k] = list[n];
+            list[n] = value;
+        }
+    }
+
+
+    public void OnShuffleButtonClick(FlashcardSet selectedSet)
+    {
+        Shuffle(selectedSet.Flashcards);
+        StateHasChanged(); 
     }
 
 }

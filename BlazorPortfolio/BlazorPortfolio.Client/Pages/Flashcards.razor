@@ -18,10 +18,16 @@
     }
 
     button.btn.btn-outline-info:hover, input[type="button"].btn.btn-outline-info:hover {
-                background-color: rgba(215, 108, 148, 0.52);
+                background-color: rgba(215, 108, 148, 0.4);
         color: white;
     }
-   
+
+    .new-card-container
+    {
+        background-color: rgba(200, 200, 200, 0.5);
+        padding: 10px;
+        padding-bottom: 40px;
+    }
 </style>
 
 
@@ -53,6 +59,7 @@
                         <td>@set.Flashcards.Count</td>
                         <td></td>
                         <td><button class="btn btn-primary" @onclick="PlayCards">Study</button></td>
+                        <!-- <td><button class="btn btn-primary" @onclick="(() =>EditSet(set))">Edit</button></td>-->
                         <td><button class="btn btn-outline-danger" @onclick="(() => DeleteSet(set))">Delete</button></td>
                     </tr>
                 }
@@ -82,65 +89,67 @@ else if (showSets == false)
 <br />
 <br />
 
-<h4>Add new cards</h4>
+<div class=" new-card-container">
+
+    <h4>Add new cards</h4>
 
 
 
-<EditForm Model="@newFlashcard" OnValidSubmit="@AddFlashcard">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+    <EditForm Model="@newFlashcard" OnValidSubmit="@AddFlashcard">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
 
-    <div class="mb-3">
-        <label for="frontText" class="form-label">Front Text</label>
-        <InputText id="frontText" class="form-control" @bind-Value="newFlashcard.FrontText" />
-        <ValidationMessage For="@(() => newFlashcard.FrontText)" />
+        <div class="mb-3">
+            <label for="frontText" class="form-label">Front Text</label>
+            <InputText id="frontText" class="form-control" @bind-Value="newFlashcard.FrontText" />
+            <ValidationMessage For="@(() => newFlashcard.FrontText)" />
 
-    </div>
-    <div class="mb-3">
-        <label for="backText" class="form-label">Back Text</label>
-        <InputText id="backText" class="form-control" @bind-Value="newFlashcard.BackText" />
-        <ValidationMessage For="@(() => newFlashcard.BackText)" />
+        </div>
+        <div class="mb-3">
+            <label for="backText" class="form-label">Back Text</label>
+            <InputText id="backText" class="form-control" @bind-Value="newFlashcard.BackText" />
+            <ValidationMessage For="@(() => newFlashcard.BackText)" />
 
-    </div>
-    <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
 
-</EditForm>
+    </EditForm>
 
 
-<br /> 
-@if (flashcardSet.Flashcards.Any())
-{
+    <br /> 
+    @if (flashcardSet.Flashcards.Any())
+    {
     <h5>Flashcard Count: @flashcardSet.Flashcards.Count</h5>
-    <ul>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Card Front</th>
-                    <th>Cards Back</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var card in flashcardSet.Flashcards)
-                {
+        <ul>
+            <table class="table">
+                <thead>
                     <tr>
-                        <td>@card.FrontText</td>
-                        <td>@card.BackText</td>
-                        <td><button class="btn btn-outline-danger" @onclick="(() => DeleteCard(card))">Delete</button></td>
+                        <th>Card Front</th>
+                        <th>Cards Back</th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </ul>
-}
+                </thead>
+                <tbody>
+                    @foreach (var card in flashcardSet.Flashcards)
+                    {
+                        <tr>
+                            <td>@card.FrontText</td>
+                            <td>@card.BackText</td>
+                            <td><button class="btn btn-outline-danger" @onclick="(() => DeleteCard(card))">Delete</button></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </ul>
+    }
 
-<h6>Input the name of this Flashcard Set:</h6>
-<InputText @bind-Value="flashcardSet.SetName" @oninput="OnInputChanged" class="form-control" placeholder="Set Name" />
-<br />
-<button @onclick="SaveCurrentSet" class="btn btn-primary" disabled="@string.IsNullOrWhiteSpace(flashcardSet.SetName)">Save Set</button>
+    <h6>Input the name of this Flashcard Set:</h6>
+    <InputText @bind-Value="flashcardSet.SetName" @oninput="OnInputChanged" class="form-control" placeholder="Set Name" />
+    <br />
+    <button @onclick="SaveCurrentSet" class="btn btn-primary" disabled="@string.IsNullOrWhiteSpace(flashcardSet.SetName)">Save Set</button>
 
 
-
+</div>
 
 
 <br /><br />
@@ -178,16 +187,25 @@ else if (showSets == false)
 
     private async Task LoadFlashcards()
     {
-        var loadedSet = await LocalStorage.GetItemAsync<FlashcardSet>("FlashcardSet") ?? new FlashcardSet();
-        flashcardSet = loadedSet;
+        try
+        {
 
-        if (flashcardSet.Flashcards.Any())
-        {
-            nextId = flashcardSet.Flashcards.Max(fc => fc.Id) + 1;
+
+            var loadedSet = await LocalStorage.GetItemAsync<FlashcardSet>("FlashcardSet") ?? new FlashcardSet();
+            flashcardSet = loadedSet;
+
+            if (flashcardSet.Flashcards.Any())
+            {
+                nextId = flashcardSet.Flashcards.Max(fc => fc.Id) + 1;
+            }
+            else
+            {
+                nextId = 1;
+            }
         }
-        else
+        catch (Exception ex)
         {
-            nextId = 1;
+            Console.WriteLine("failed because:" + ex.Message);
         }
     }
 
@@ -260,7 +278,10 @@ else if (showSets == false)
     }
 
 
-
+    //private async Task EditSet(FlashcardSet selectedSet)
+    //{
+    //    flashcardSet = selectedSet;
+    //}
 
 }
 

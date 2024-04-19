@@ -1,0 +1,49 @@
+﻿@page "/dailyrecipe"
+@rendermode InteractiveWebAssembly
+@using BlazorPorfolio.Models
+@using BlazorPortfolio.Client.Services
+@inject SpoonacularServices SpoonacularService
+
+
+<h3>DailyRecipe</h3>
+
+    <div class="text-center mt-5">
+        <button id="loadRecipeBtn" class="btn btn-primary btn-lg" @onclick="LoadRecipe">Load Recipe</button>
+    </div>
+
+    <div class="mt-3 text-center">
+        <h2 id="recipeTitle"></h2>
+        <img id="recipeImage" alt="Recipe image" style="display:none; max-width:100%; height:auto;">
+        <p id="readyIn" class="mt-2"></p>
+        <a id="recipeUrl" href="" target="_blank" style="display:none;"></a>
+    </div>
+
+
+
+@if (Recipe != null)
+{
+
+    <div class="mt-3 text-center">
+        <h2>@Recipe.Title</h2>
+        <img src="@Recipe.Image" alt="Recipe image" style="max-width:100%; height:auto;">
+        <p class="mt-2">Ready in @Recipe.ReadyInMinutes minutes</p>
+        <a href="@Recipe.SourceUrl" target="_blank">View Full Recipe</a>
+    </div>
+}
+else  {
+    <p>hello</p>
+}
+
+
+
+@code {
+
+    public RecipeData Recipe { get; set; } 
+
+
+    public async Task LoadRecipe()
+    {
+        Recipe = await SpoonacularService.GetRecipeAsync();
+
+    }
+}

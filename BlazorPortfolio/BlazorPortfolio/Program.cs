@@ -1,5 +1,6 @@
 using Blazored.LocalStorage;
 using BlazorPortfolio.Client.Pages;
+using BlazorPortfolio.Client.Services;
 using BlazorPortfolio.Components;
 using BlazorPortfolio.Components.Account;
 using BlazorPortfolio.Data;
@@ -39,6 +40,11 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 builder.Services.AddBlazoredLocalStorage();
+
+builder.Services.AddHttpClient<SpoonacularServices>(client =>
+{
+    client.BaseAddress = new Uri("https://api.spoonacular.com/");
+});
 
 
 var app = builder.Build();

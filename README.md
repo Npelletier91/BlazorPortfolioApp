@@ -2,6 +2,16 @@
 
 Welcome to my Blazor web app portfolio! This project showcases my skills in developing dynamic web applications using Blazor. It includes two main features: a Flash Card application and a Daily Recipe app. Below, you'll find detailed descriptions of each page along with their unique functionalities.
 
+
+## Technologies Used
+- Blazor (a framework part of .NET that allows developers to build interactive and reusable web UIs using C# instead of JavaScript)
+- Spoonacular API
+- C#
+- HTML/CSS
+- JavaScript (for supplemental front-end functionality)
+- Visual Studio
+
+  
 ## Flash Card Application
 
 The goal for this application was to gain hands-on experience in building an app that not only includes features like creating, managing, and studying flashcards, but also serves as a personal tool to prepare for technical interviews.
@@ -34,11 +44,7 @@ The Daily Recipe App taps into the rich database of the Spoonacular API to deliv
 ![Screenshot 2024-04-19 151916](https://github.com/Npelletier91/BlazorPortfolioApp/assets/129113700/6a064d49-e0d1-4a0c-ba59-88bbaf5c4fa3)
 
 
-## Technologies Used
-- Blazor
-- Spoonacular API
-- HTML/CSS
-- JavaScript (for supplemental front-end functionality)
+
 
 
 

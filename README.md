@@ -28,7 +28,7 @@ The Daily Recipe App taps into the rich database of the Spoonacular API to deliv
 
 #### API Integration
 - **Spoonacular API:** This app makes API calls to Spoonacular, rendering recipes directly from their extensive database.
-- Shortcut to API code [here](https://github.com/Npelletier91/BlazorPortfolioApp/blob/main/BlazorPortfolio/BlazorPortfolio.Client/Pages/Flashcards.razor)
+- Shortcut to API code [here](https://github.com/Npelletier91/BlazorPortfolioApp/blob/main/BlazorPortfolio/BlazorPortfolio.Client/Services/SpoonacularServices.cs)
 
 #### Screenshots
 ![Screenshot 2024-04-19 151916](https://github.com/Npelletier91/BlazorPortfolioApp/assets/129113700/6a064d49-e0d1-4a0c-ba59-88bbaf5c4fa3)
